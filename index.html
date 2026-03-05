@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flyer ADN Afore Coppel - Guía de Digitalización 3X Final</title>
-    <!-- Librerías de diseño y exportación -->
+    <title>Flyer ADN Afore Coppel - Guía de Digitalización 3X (PDF)</title>
+    <!-- Librerías de diseño y exportación PDF -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,12 +15,9 @@
         }
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #cbd5e1; 
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         
         .bg-coppel-blue { background-color: var(--coppel-blue) !important; }
@@ -29,20 +26,29 @@
         
         .flyer-wrapper {
             width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
+            margin: 20px 0;
         }
 
-        #flyer-to-print {
-            width: 800px;
-            min-height: 1080px; 
+        /* ESTRUCTURA TAMAÑO CARTA EXACTO Y CENTRADO SEGURO PARA HTML2CANVAS */
+        .pdf-page {
+            width: 816px;
+            height: 1056px; 
             background: white;
             position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin: 0 auto 30px auto;
             overflow: hidden; 
             flex-shrink: 0;
+        }
+
+        /* CLASE EXPERTA: Sombra y borde 3D compatible al 100% con html2canvas */
+        .export-safe-shadow {
+            background-color: #ffffff;
+            border-radius: 1.5rem; 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e2e8f0;
         }
 
         .wave-svg-container {
@@ -50,7 +56,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 350px;
+            height: 380px;
             z-index: 1;
         }
 
@@ -64,12 +70,10 @@
         .alert-badge {
             background: #ff4d4d;
             color: white;
-            display: grid;
-            place-items: center;
+            display: inline-block; 
             text-align: center;
             width: fit-content;
-            height: 44px;
-            padding: 0 30px;
+            padding: 12px 30px; 
             border-radius: 50px;
             font-weight: 900;
             font-size: 0.95rem;
@@ -78,58 +82,28 @@
             box-shadow: 0 4px 12px rgba(255, 77, 77, 0.4);
             position: relative;
             z-index: 10;
-            line-height: 1;
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-
-        .image-display-frame {
-            background: #f8fafc;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            height: 200px; 
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
         }
 
         .main-content {
             position: relative;
             z-index: 10;
             padding: 0 60px;
-            margin-top: 330px; 
         }
         
         .shadow-text {
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .popup-action-box {
-            background-color: #fff7ed;
-            border: 3px solid #ea580c;
-            padding: 15px;
-            border-radius: 1.5rem;
-            margin: 10px 0;
-            position: relative;
-            z-index: 50;
-        }
-
         .step-tag {
             background: var(--coppel-blue);
             color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 10px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 900;
             display: inline-block;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
         .flyer-footer {
@@ -138,150 +112,294 @@
             position: relative;
             z-index: 30;
             padding-bottom: 35px;
-            margin-top: auto;
         }
 
-        .no-export {
-            margin: 40px 0;
+        .top-header-web {
             text-align: center;
+            padding: 0 16px;
+            margin-top: 32px;
+        }
+        
+        .no-export {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto 40px auto;
         }
 
-        .flow-arrow {
+        /* SVG Flechas Flujo Seguras */
+        .flow-arrow-container {
             display: flex;
             justify-content: center;
-            margin: -5px 0;
-            color: #ea580c;
+            margin: 12px 0;
+            z-index: 20;
+            position: relative;
         }
     </style>
 </head>
 <body>
 
-    <div class="mt-8 text-center px-4">
+    <div class="top-header-web">
         <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">Comunicación Institucional Afore Coppel</h1>
-        <p class="text-gray-500 italic mt-1">Manual de Flujo: Guía de Digitalización Completa</p>
+        <p class="text-gray-600 font-medium mt-1">Vista Previa: Guía de Digitalización 3X (3 Páginas)</p>
+    </div>
+
+    <!-- BOTÓN DE DESCARGA PDF -->
+    <div class="no-export gap-4 mt-4">
+        <button onclick="downloadPDF()" id="btn-pdf" class="flex items-center px-10 py-5 font-bold text-white bg-red-600 rounded-2xl shadow-xl hover:bg-red-700 transition-all active:scale-95 text-lg cursor-pointer">
+            <svg class="w-7 h-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Descargar PDF Institucional
+        </button>
+        <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Afore Coppel - Formato Carta Resolutivo</p>
     </div>
 
     <div class="flyer-wrapper">
-        <!-- ÁREA DEL FLYER -->
-        <div id="flyer-to-print">
-            <div class="wave-svg-container">
-                <svg width="800" height="350" viewBox="0 0 800 350" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0H800V240C800 240 600 320 400 320C200 320 0 240 0 240V0Z" fill="#00418D"/>
-                </svg>
+        <!-- CONTENEDOR MAESTRO PARA EL PDF -->
+        <div id="document-to-print">
+            
+            <!-- ================= HOJA 1: TEORÍA DE FLUJO (PARTE 1) ================= -->
+            <div class="pdf-page bg-white">
+                
+                <!-- Fondo Header Pág 1 -->
+                <div class="wave-svg-container" style="height: 320px;">
+                    <svg width="816" height="320" viewBox="0 0 816 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0H816V240C816 240 612 320 408 320C204 320 0 240 0 240V0Z" fill="#00418D"/>
+                    </svg>
+                </div>
+
+                <div class="bubble w-12 h-12 top-[-10px] left-[15%] opacity-40"></div>
+                <div class="bubble w-20 h-20 top-[60px] left-[-30px] opacity-20"></div>
+                <div class="bubble w-16 h-16 top-[200px] right-[10%] opacity-30"></div>
+                
+                <!-- Encabezado Pág 1 -->
+                <header style="position: absolute; top: 40px; left: 60px; right: 60px; z-index: 20;" class="flex justify-between items-start">
+                    <div style="max-width: 530px;">
+                        <div class="alert-badge mb-4">¡ATENCIÓN ASESOR!</div>
+                        <h1 class="text-white text-[28px] font-black leading-tight shadow-text uppercase">
+                            <span class="whitespace-nowrap text-coppel-yellow">RECHAZO POR ESTATUS</span><br>
+                            <span class="whitespace-nowrap text-coppel-yellow text-[34px]">INCOMPLETO</span>
+                        </h1>
+                        <p class="text-white mt-3 text-lg font-bold max-w-xl leading-tight shadow-text">
+                            EL TRÁMITE CONSTA DE 2 APARTADOS DE CARGA
+                        </p>
+                        <div class="text-xs font-bold text-white opacity-90 italic mt-1 tracking-wide">
+                            (Modificación de Datos: Beneficiario)
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 mt-1">
+                        <img src="Coppel2.png" alt="Logo Coppel" class="h-14 w-auto object-contain drop-shadow-md" onerror="this.src='https://via.placeholder.com/150x80/00418D/FFFFFF?text=Afore+Coppel'">
+                    </div>
+                </header>
+
+                <main class="main-content flex-grow" style="margin-top: 310px;">
+                    
+                    <!-- NUEVA INTRODUCCIÓN (Fuente y espaciado minimizados para dar respiro) -->
+                    <div class="bg-yellow-50 border-l-[5px] border-coppel-yellow p-4 rounded-r-xl shadow-sm mb-6 flex items-start">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-3 mt-0.5 flex-shrink-0">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p class="text-[14.5px] text-gray-800 font-medium leading-snug">
+                            Para evitar el rechazo de <strong class="text-gray-900">Estatus Incompleto</strong>, es absolutamente necesario asegurarte de digitalizar la <strong class="text-coppel-blue">Resolución de Pensión</strong> en <strong class="text-gray-900">3 campos diferentes</strong> distribuidos en dos apartados distintos de la plataforma. Sigue los pasos como lo indicamos a continuación:
+                        </p>
+                    </div>
+
+                    <!-- PASO 1 (Mantenido intacto en tamaño grande) -->
+                    <div class="export-safe-shadow bg-blue-50/50 p-8 border-blue-200">
+                        <div class="step-tag shadow-sm mb-6 text-sm px-6 py-2">APARTADO 1: INICIO DE DIGITALIZACIÓN</div>
+                        <p class="text-lg font-medium text-gray-700 mb-6">Realiza la 1ra carga de la <span class="text-coppel-blue font-black uppercase">Resolución de Pensión</span> en:</p>
+                        <div class="flex items-center text-base font-black text-coppel-blue bg-white p-4 rounded-xl shadow-sm border border-blue-100">
+                            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 text-sm flex-shrink-0 shadow-inner">1</span>
+                            DOCUMENTO QUE ACREDITE A LA PERSONA COMO BENEFICIARIO
+                        </div>
+                    </div>
+
+                    <!-- FLECHA DOWN (Ajustada) -->
+                    <div class="flow-arrow-container my-4">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 4v16M19 13l-7 7-7-7"/>
+                        </svg>
+                    </div>
+
+                    <!-- ALERTA POPUP (Regresó a su versión compacta original) -->
+                    <div class="export-safe-shadow bg-[#fff7ed] p-5 border-[3px] border-[#ea580c] mb-2">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-2xl mr-3 shadow-md border-[2px] border-white flex-shrink-0">X</div>
+                            <div>
+                                <p class="text-lg font-black text-red-600 uppercase tracking-tighter leading-tight">¡El trámite no ha terminado!</p>
+                                <p class="text-[12px] font-bold text-orange-900 uppercase mt-0.5">Cierra el mensaje de validación y continúa.</p>
+                            </div>
+                        </div>
+                        <p class="text-[13px] text-gray-700 leading-snug bg-white p-3 rounded-xl border border-orange-200 shadow-sm font-medium mb-3 italic">
+                            "Expediente de identificación requiere validación visual... el trámite será completado al concluir la validación"
+                        </p>
+                        
+                        <!-- Agregado de explicación clave compactada -->
+                        <div class="border-l-[3px] border-[#ea580c] pl-3">
+                            <p class="text-[13px] text-gray-800 leading-snug">
+                                <span class="font-black text-[#ea580c] uppercase tracking-wide text-[11px]">La clave del proceso:</span><br>
+                                Al terminar la digitalización 1, te arrojará el mensaje de arriba (ver imagen de referencia en Pág 3). <strong class="text-red-600 underline">CERRAR esa ventana es obligatorio</strong> para habilitar el siguiente paso y continuar digitalizando.
+                            </p>
+                        </div>
+                    </div>
+
+                </main>
+                
+                <!-- Footer sutil Hoja 1 -->
+                <div class="mt-auto w-full pb-8">
+                    <div class="text-right px-12 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                        Página 1 de 3
+                    </div>
+                </div>
             </div>
 
-            <div class="bubble w-12 h-12 top-[-10px] left-[15%] opacity-40"></div>
-            <div class="bubble w-20 h-20 top-[60px] left-[-30px] opacity-20"></div>
-            <div class="bubble w-16 h-16 top-[220px] right-[10%] opacity-30"></div>
-            
-            <!-- Encabezado con tamaño de Logo corregido -->
-            <header style="position: absolute; top: 50px; left: 60px; right: 60px; z-index: 20;" class="flex justify-between items-start">
-                <div style="max-width: 520px;">
-                    <div class="alert-badge mb-5">¡ATENCIÓN ASESOR!</div>
-                    <h1 class="text-white text-3xl font-black leading-tight shadow-text uppercase">
-                        <span class="whitespace-nowrap text-coppel-yellow">RECHAZO POR ESTATUS INCOMPLETO</span><br>
-                        <span class="text-xl whitespace-nowrap">EL TRÁMITE CONSTA DE 2 APARTADOS DE CARGA</span>
-                        <div class="text-base font-bold opacity-90 italic normal-case tracking-normal mt-1">
-                            MODIFICACIÓN DE DATOS: BENEFICIARIO
-                        </div>
-                    </h1>
+            <!-- ================= HOJA 2: TEORÍA DE FLUJO (PARTE 2) ================= -->
+            <div class="pdf-page bg-gray-50">
+                
+                <!-- Mini Encabezado Institucional Hoja 2 -->
+                <div class="h-[120px] bg-coppel-blue w-full flex justify-between items-center px-12 relative overflow-hidden shadow-md">
+                    <div class="bubble w-12 h-12 top-[-10px] left-[5%] opacity-20"></div>
+                    <div class="bubble w-20 h-20 bottom-[-30px] left-[30%] opacity-10"></div>
+                    <h2 class="text-white text-2xl font-black uppercase tracking-[0.2em] relative z-10 border-l-4 border-coppel-yellow pl-4">
+                        Continuación de Flujo
+                    </h2>
+                    <img src="Coppel2.png" alt="Logo Coppel" class="h-16 w-auto object-contain drop-shadow-md relative z-10" onerror="this.src='https://via.placeholder.com/150x80/00418D/FFFFFF?text=Afore+Coppel'">
                 </div>
-                <div class="flex-shrink-0 pt-1">
-                    <!-- Logo ajustado a h-14 para alineación perfecta -->
-                    <img src="Coppel2.png" alt="Logo Coppel" class="h-14 w-auto object-contain drop-shadow-md" onerror="this.src='https://via.placeholder.com/150x60/00418D/FFFFFF?text=Afore+Coppel'">
-                </div>
-            </header>
 
-            <main class="main-content">
-                <div class="bg-blue-50/70 p-5 rounded-3xl border border-blue-100 mb-2">
-                    <div class="step-tag">APARTADO 1: INICIO DE DIGITALIZACIÓN</div>
-                    <p class="text-sm font-bold text-gray-700 mb-2 italic">Realiza la 1ra carga de la <span class="text-coppel-blue font-black">RESOLUCIÓN DE PENSIÓN</span> en:</p>
-                    <div class="flex items-center text-xs font-black text-coppel-blue bg-white p-3 rounded-xl shadow-sm border border-blue-200">
-                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 text-[12px]">1</span>
-                        DOCUMENTO QUE ACREDITE A LA PERSONA COMO BENEFICIARIO
+                <main class="main-content flex-grow flex flex-col pt-12">
+                    
+                    <!-- PASO 2 -->
+                    <div class="export-safe-shadow bg-blue-50/50 p-8 border-blue-200 mt-4">
+                        <div class="step-tag shadow-sm mb-6 text-sm px-6 py-2">APARTADO 2: SEGUNDA DIGITALIZACIÓN</div>
+                        <p class="text-lg font-medium text-gray-700 mb-6">Tras cerrar la ventana emergente, digitaliza la <span class="text-coppel-blue font-black uppercase">Resolución de Pensión</span> <strong class="text-gray-900 border-b-2 border-coppel-yellow">2 veces más</strong> en:</p>
+                        
+                        <ul class="space-y-4">
+                            <li class="flex items-center text-base font-black text-coppel-blue bg-white p-4 rounded-xl shadow-sm border border-blue-100">
+                                <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 text-sm flex-shrink-0 shadow-inner">2</span>
+                                DOCUMENTO PROBATORIO
+                            </li>
+                            <li class="flex items-center text-base font-black text-coppel-blue bg-white p-4 rounded-xl shadow-sm border border-blue-100">
+                                <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 text-sm flex-shrink-0 shadow-inner">3</span>
+                                DOCUMENTO QUE ACREDITE A LA PERSONA COMO BENEFICIARIO
+                            </li>
+                        </ul>
                     </div>
-                </div>
 
-                <div class="flow-arrow">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5H7z"/></svg>
-                </div>
-
-                <div class="popup-action-box shadow-lg">
-                    <div class="flex items-center mb-3">
-                        <div class="bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-2xl mr-3 shadow-md border-2 border-white">X</div>
-                        <div>
-                            <p class="text-sm font-black text-red-600 uppercase tracking-tighter">¡EL TRÁMITE NO HA TERMINADO!</p>
-                            <p class="text-[10px] font-bold text-orange-900 uppercase">Cierra el mensaje de "Validación Visual" y continúa.</p>
-                        </div>
+                    <!-- FLECHA DOWN -->
+                    <div class="flow-arrow-container my-8">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 4v16M19 13l-7 7-7-7"/>
+                        </svg>
                     </div>
-                    <p class="text-[11px] text-gray-700 leading-tight bg-white p-3 rounded-xl border border-orange-200">
-                        "Expediente de identificación requiere validación visual... el trámite será completado al concluir la validación" 
-                        <br><span class="text-red-600 font-bold">← ESTE AVISO NO ES LA FINALIZACIÓN.</span>
-                    </p>
-                </div>
 
-                <div class="flow-arrow">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5H7z"/></svg>
-                </div>
-
-                <div class="bg-blue-50/70 p-5 rounded-3xl border border-blue-100 mt-2 mb-6">
-                    <div class="step-tag">APARTADO 2: SEGUNDA DIGITALIZACIÓN</div>
-                    <p class="text-sm font-bold text-gray-700 mb-3 italic">Digitaliza la <span class="text-coppel-blue font-black">RESOLUCIÓN DE PENSIÓN</span> 2 veces más en:</p>
-                    <ul class="space-y-2">
-                        <li class="flex items-center text-xs font-black text-coppel-blue bg-white p-2 rounded-xl shadow-sm border border-blue-200">
-                            <span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center mr-2 text-[10px]">2</span>
-                            DOCUMENTO PROBATORIO
-                        </li>
-                        <li class="flex items-center text-xs font-black text-coppel-blue bg-white p-2 rounded-xl shadow-sm border border-blue-200">
-                            <span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center mr-2 text-[10px]">3</span>
-                            DOCUMENTO QUE ACREDITE A LA PERSONA COMO BENEFICIARIO
-                        </li>
-                    </ul>
-                </div>
-
-                <section class="mb-4">
-                    <div class="flex items-center space-x-3 mb-3">
-                        <div class="h-[1px] bg-gray-200 flex-1"></div>
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.3em]">Guía Visual de Captura</p>
-                        <div class="h-[1px] bg-gray-200 flex-1"></div>
-                    </div>
-                    <div class="image-grid">
-                        <div class="image-display-frame border-2 border-red-400">
-                            <img src="mensajerechazo.png" alt="Cerrar Aviso" class="max-w-full max-h-full object-contain" onerror="this.src='https://via.placeholder.com/350x200/fef2f2/991b1b?text=mensajerechazo.png'">
-                            <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded font-black text-[10px] shadow-sm">CERRAR EN X</div>
-                        </div>
-                        <div class="image-display-frame border-2 border-coppel-blue">
-                            <img src="digitalizacion.png" alt="Continuar Carga" class="max-w-full max-h-full object-contain" onerror="this.src='https://via.placeholder.com/350x200/eff6ff/1e40af?text=digitalizacion.png'">
-                            <div class="absolute bottom-0 w-full bg-coppel-blue text-white text-[8px] font-bold text-center py-1 uppercase tracking-widest">CONTINUAR CARGA AQUÍ</div>
+                    <!-- Tip Box Final -->
+                    <div class="bg-gray-800 border-l-[6px] border-coppel-yellow p-8 rounded-r-2xl shadow-lg text-white">
+                        <div class="flex items-start">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FFD400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-6 flex-shrink-0">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <div>
+                                <p class="text-xl font-black text-coppel-yellow uppercase leading-tight mb-2 tracking-widest">Expediente Completo</p>
+                                <p class="text-base text-gray-200 leading-relaxed font-medium">
+                                    Para evitar otros motivos de rechazo, asegúrate siempre de digitalizar <strong class="text-white border-b border-gray-400">todos los demás documentos requeridos</strong> por el servicio de forma regular antes de finalizar por completo tu trámite.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </section>
-            </main>
-
-            <footer class="flyer-footer">
-                <div class="bg-coppel-yellow h-2 w-full mb-8"></div>
-                <div class="px-12 flex justify-between items-center">
-                    <div class="w-1/2">
-                        <p class="text-coppel-blue font-black text-lg mb-1 italic leading-none uppercase">EXPEDIENTE COMPLETO</p>
-                        <p class="text-gray-500 font-bold text-xs uppercase tracking-tighter leading-tight">No olvides digitalizar todos los demás documentos necesarios para el servicio</p>
-                    </div>
-                    <div class="text-right border-l-2 border-gray-100 pl-8 w-1/2">
-                        <p class="text-xs font-bold text-gray-400 italic mb-1">Creado por:</p>
-                        <p class="text-coppel-blue font-black text-base uppercase tracking-tight leading-none">Gerencia de atención al público</p>
+                </main>
+                
+                <!-- Footer sutil Hoja 2 -->
+                <div class="mt-auto w-full pb-8">
+                    <div class="text-right px-12 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                        Página 2 de 3
                     </div>
                 </div>
-            </footer>
+            </div>
+
+            <!-- ================= HOJA 3: ANEXO VISUAL ================= -->
+            <div class="pdf-page bg-gray-50">
+                
+                <!-- Mini Encabezado Institucional Hoja 3 -->
+                <div class="h-[120px] bg-coppel-blue w-full flex justify-between items-center px-12 relative overflow-hidden shadow-md">
+                    <div class="bubble w-12 h-12 top-[-10px] left-[5%] opacity-20"></div>
+                    <div class="bubble w-20 h-20 bottom-[-30px] left-[30%] opacity-10"></div>
+                    <h2 class="text-white text-2xl font-black uppercase tracking-[0.2em] relative z-10 border-l-4 border-coppel-yellow pl-4">
+                        Anexo Visual
+                    </h2>
+                    <img src="Coppel2.png" alt="Logo Coppel" class="h-16 w-auto object-contain drop-shadow-md relative z-10" onerror="this.src='https://via.placeholder.com/150x80/00418D/FFFFFF?text=Afore+Coppel'">
+                </div>
+
+                <main class="main-content flex-grow flex flex-col pt-12">
+                    
+                    <!-- Imágenes de Referencia -->
+                    <section class="export-safe-shadow p-8 relative mb-8">
+                        <div style="position: absolute; top: -16px; left: 0; width: 100%; text-align: center; z-index: 30;">
+                            <span class="bg-coppel-yellow text-coppel-blue text-sm font-black py-2 px-10 rounded-full shadow-md uppercase tracking-[0.2em] border border-yellow-300 inline-block">
+                                Guía Visual de Captura
+                            </span>
+                        </div>
+
+                        <div class="text-center mb-8 mt-4">
+                            <!-- TEXTO CORREGIDO: De sistema a plataforma -->
+                            <h3 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">Identifica las ventanas de la plataforma</h3>
+                            <p class="text-base text-gray-600 mt-2 leading-relaxed">Sigue la guía de color para saber dónde cerrar la alerta y dónde continuar cargando.</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-8">
+                            <!-- Cerrar Aviso -->
+                            <div class="flex flex-col items-center">
+                                <!-- ENCABEZADO CON TEXTO NUEVO Y ALTURA FIJA PARA SIMETRÍA -->
+                                <div class="bg-red-50 text-red-800 px-4 py-2 rounded-t-xl border-2 border-red-400 w-full text-center border-b-0 flex flex-col justify-center h-[75px]">
+                                    <span class="font-black text-[13px] tracking-wider uppercase">Mensaje de Aviso</span>
+                                    <span class="text-[10px] font-bold mt-1 leading-tight opacity-90">(Referencia a la alerta mencionada en la página 1)</span>
+                                </div>
+                                <div class="shadow-sm border-[3px] border-red-400 bg-white rounded-b-xl overflow-hidden w-full flex flex-col">
+                                    <div class="relative h-[280px] w-full">
+                                        <!-- Imagen con altura fija y proporcionada -->
+                                        <img src="mensajerechazo.png" alt="Cerrar Aviso" class="absolute inset-0 w-full h-full object-contain p-4" onerror="this.src='https://via.placeholder.com/350x280/fef2f2/991b1b?text=mensajerechazo.png'">
+                                    </div>
+                                    <div class="bg-red-600 text-white px-3 py-2 font-black text-[13px] shadow-md text-center tracking-widest z-20">CERRAR EN X</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Continuar Carga -->
+                            <div class="flex flex-col items-center">
+                                <!-- ENCABEZADO CON TEXTO NUEVO Y ALTURA FIJA PARA SIMETRÍA -->
+                                <div class="bg-blue-50 text-coppel-blue px-4 py-2 rounded-t-xl border-2 border-coppel-blue w-full text-center border-b-0 flex flex-col justify-center h-[75px]">
+                                    <span class="font-black text-[13px] tracking-wider uppercase">Segunda Digitalización</span>
+                                    <span class="text-[10px] font-bold mt-1 leading-tight opacity-90">(Debes llegar a esta pantalla. El rechazo ocurre por no llegar aquí)</span>
+                                </div>
+                                <div class="shadow-sm border-[3px] border-coppel-blue bg-white rounded-b-xl overflow-hidden w-full flex flex-col">
+                                    <div class="relative h-[280px] w-full">
+                                        <!-- Imagen con altura fija -->
+                                        <img src="digitalizacion.png" alt="Continuar Carga" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.src='https://via.placeholder.com/350x280/eff6ff/1e40af?text=digitalizacion.png'">
+                                    </div>
+                                    <div class="bg-coppel-blue text-white text-[13px] font-black text-center py-2 uppercase tracking-widest z-20">CONTINUAR CARGA AQUÍ</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </main>
+                
+                <!-- FOOTER FINAL -->
+                <footer class="flyer-footer mt-auto bg-white pt-8 pb-6">
+                    <div class="text-right px-12 mb-4 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                        Página 3 de 3
+                    </div>
+                    <div class="bg-coppel-yellow h-2 w-full mb-4"></div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-[10px] font-medium tracking-widest uppercase">Creado por: Gerencia de Atención al Público</p>
+                    </div>
+                </footer>
+            </div>
+
         </div>
     </div>
 
-    <div class="no-export flex flex-col items-center gap-4 mb-24">
-        <button onclick="downloadImage()" id="btn-png" class="flex items-center px-10 py-5 font-bold text-white bg-blue-600 rounded-2xl shadow-xl hover:bg-blue-700 transition-all active:scale-95">
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Descargar Imagen Institucional
-        </button>
-        <p class="text-gray-400 text-xs uppercase tracking-widest font-bold">Afore Coppel - Versión Blindada 6.8 Final</p>
-    </div>
-
+    <!-- SCRIPT DE DESCARGA EXPERTO -->
     <script>
         function ensureImagesLoaded(container) {
             const imgs = container.getElementsByTagName('img');
@@ -290,46 +408,67 @@
                 return new Promise(resolve => {
                     img.onload = resolve;
                     img.onerror = resolve;
-                    setTimeout(resolve, 3000);
+                    setTimeout(resolve, 3000); 
                 });
             });
             return Promise.all(promises);
         }
 
-        async function downloadImage() {
-            const flyer = document.getElementById('flyer-to-print');
-            const btn = document.getElementById('btn-png');
+        async function downloadPDF() {
+            const element = document.getElementById('document-to-print');
+            const btn = document.getElementById('btn-pdf');
             const originalHTML = btn.innerHTML;
             
             try {
                 btn.disabled = true;
-                btn.innerHTML = "<span>Preparando imágenes...</span>";
+                btn.innerHTML = "<span class='animate-pulse'>Estructurando PDF en Alta Resolución...</span>";
                 
                 await document.fonts.ready;
-                await ensureImagesLoaded(flyer);
+                await ensureImagesLoaded(element);
                 
-                btn.innerHTML = "<span>Generando imagen...</span>";
-                await new Promise(r => setTimeout(r, 600));
+                await new Promise(resolve => setTimeout(resolve, 400));
                 
-                const canvas = await html2canvas(flyer, {
-                    scale: 3, 
-                    useCORS: true,
-                    allowTaint: true, 
-                    backgroundColor: "#FFFFFF",
-                    logging: false,
-                    width: 800,
-                    height: flyer.offsetHeight
-                });
+                // Configuración Experta que soluciona márgenes y captura perfecta
+                const opt = {
+                    margin:       0,
+                    filename:     'Guia_Digitalizacion_3X_Coppel.pdf',
+                    image:        { type: 'jpeg', quality: 1.0 },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        allowTaint: true,
+                        letterRendering: true, 
+                        backgroundColor: "#ffffff",
+                        onclone: function(clonedDoc) {
+                            clonedDoc.body.style.margin = '0';
+                            clonedDoc.body.style.padding = '0';
+                            
+                            const cloneWrapper = clonedDoc.getElementById('document-to-print');
+                            if(cloneWrapper) {
+                                cloneWrapper.style.width = '816px'; 
+                                cloneWrapper.style.position = 'absolute';
+                                cloneWrapper.style.top = '0';
+                                cloneWrapper.style.left = '0';
+                                cloneWrapper.style.margin = '0';
+                            }
+
+                            const pages = clonedDoc.querySelectorAll('.pdf-page');
+                            pages.forEach(page => {
+                                page.style.boxShadow = 'none';
+                                page.style.margin = '0';
+                                page.style.marginBottom = '0';
+                            });
+                        }
+                    },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
+                };
                 
-                const imageData = canvas.toDataURL('image/png', 1.0);
-                const link = document.createElement('a');
-                link.download = `Flyer_Digitalizacion_Integral_Final.png`;
-                link.href = imageData;
-                link.click();
+                // Generar y descargar el PDF
+                await html2pdf().set(opt).from(element).save();
                 
             } catch (error) {
-                console.error(error);
-                alert("Error técnico al generar la imagen. Asegúrate de que Coppel2.png, mensajerechazo.png y digitalizacion.png estén en la misma carpeta.");
+                console.error("Detalle del error:", error);
+                alert("Hubo un error al generar el PDF. Asegúrate de que las imágenes estén en la misma carpeta.");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;
